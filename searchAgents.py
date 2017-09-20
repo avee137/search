@@ -498,8 +498,8 @@ def foodHeuristic(state, problem):
     heuristic_val=0
     starting_position=problem.startingGameState
     food_list=foodGrid.asList()
-    print "foods" + str(len(food_list))
-    print "Food Heuristics in Action now !"
+    #print "foods" + str(len(food_list))
+    #print "Food Heuristics in Action now !"
     for food in food_list:
         cost_val=mazeDistance(position,food,starting_position)
         if cost_val >= heuristic_val:
