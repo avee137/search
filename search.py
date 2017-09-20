@@ -104,20 +104,17 @@ def depthFirstSearch(problem):
     explored_list = [] # visited nodes
     st.push((problem.getStartState(),[]))#second arg would store all the moves , initialize to empty
     while not st.isEmpty():
-        n, movements_list = st.pop()
-        if n not in explored_list:
-            if problem.isGoalState(n):
+        node, movements_list = st.pop()
+        if node not in explored_list:
+            if problem.isGoalState(node):
                 return movements_list
-            successor_nodes = problem.getSuccessors(n)
+            successor_nodes = problem.getSuccessors(node)
             for each_successor in (successor_nodes):
-                p,d,c = each_successor # p-osition same as node, d-irection, c-ost of path
-                new_movements_list = movements_list + [d] # this assignment creates new list for each successor
-		st.push((p,new_movements_list)) #store traversed path so far
-        explored_list.append(n)
-    print explored_list
-    return []
-    
-
+                node_position,next_move,move_cost = each_successor # p-osition same as node, d-irection, c-ost of path
+                new_movements_list = movements_list + [next_move] # this assignment creates new list for each successor
+		st.push((node_position,new_movements_list)) #store traversed path so far
+        explored_list.append(node)
+    return []  
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -132,14 +129,11 @@ def breadthFirstSearch(problem):
             if(problem.isGoalState(node)):
                 return movements_list
             for successor in problem.getSuccessors(node):
-                p,d,c = successor
-                new_movement = movements_list + [d]
-                q.push((p, new_movement))
-    
+                node_position,next_move,move_cost = successor
+                new_movement_list = movements_list + [next_move]
+                q.push((node_position, new_movement_list)) 
             explored_list.append(node)
     return []
-    #import pdb
-    #pdb.set_trace()
     #util.raiseNotDefined()
 
 def uniformCostSearch(problem):
@@ -154,9 +148,9 @@ def uniformCostSearch(problem):
             if (problem.isGoalState(node)):
                 return movements_list
             for successor in problem.getSuccessors(node):
-                p,d,c = successor
-                new_movement = movements_list + [d]
-                pq.push((p,new_movement),problem.getCostOfActions(new_movement))
+                node_position,next_move,move_cost = successor
+                new_movement_list = movements_list + [next_move]
+                pq.push((node_position,new_movement_list),problem.getCostOfActions(new_movement_list))
             explored_list.append(node)
     return []
     #util.raiseNotDefined()
@@ -181,9 +175,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             if(problem.isGoalState(node)):
                 return movements_list
             for successor in problem.getSuccessors(node):
-                p,d,c = successor
-                new_movement = movements_list + [d]
-                pq.push((p,new_movement),(problem.getCostOfActions(new_movement)+heuristic(p, problem)))
+                node_position,next_move,move_cost = successor
+                new_movement_list = movements_list + [next_move]
+                pq.push((node_position,new_movement_list),\
+                        (problem.getCostOfActions(new_movement_list)+heuristic(node_position, problem)))
             explored_list.append(node)
     return []
 

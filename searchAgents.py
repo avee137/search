@@ -353,6 +353,14 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
+def displacementBetween((x1,y1), (x2,y2)):
+    """
+    input (x1,y1) and (x2, y2)
+    output ((x1-x2)^2 + (y1-y2)^2)^.5
+    """
+    import math
+    return math.ceil(math.pow(math.pow((x1-x2),2) + math.pow((y1-y2),2), .5))
+
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -366,27 +374,34 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+    "*** YOUR CODE HERE ***"
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
     heuristicValue = 0
     remainingCorners = []
     remainingCorners += corners
-    for eachCorner in state[1]:#remove the already visited ones
+    #remove the already visited ones, already visited ones are added in state
+    for eachCorner in state[1]:
         remainingCorners.remove(eachCorner)
-    
-    for each in remainingCorners:
-        minCost = 999
-        for eachOne in remainingCorners:
-            cost = manhattanHeuristic(state[0],eachOne)
-            if cost < minCost:
-                minCost = cost
-                newCorner = each
+    #import pdb
+    #pdb.set_trace()
+    beginningPosition = state[0] 
+    while remainingCorners:
+        #get the closest corner to beginning position
+        minCost = -1
+        for eachCorner in remainingCorners:
+            newCost = util.manhattanDistance(beginningPosition, eachCorner)
+            #newCost = displacementBetween(beginningPosition, eachCorner)
+	    #init minCost to be the dist of first corner then compare with each corned to find actual min cost
+            if (minCost is -1) or (newCost < minCost):
+                minCost = newCost
+                nextNearestCorner = eachCorner
+                beginningPosition = nextNearestCorner
         heuristicValue += minCost
-        remainingCorners.remove(newCorner)
-          
-    "*** YOUR CODE HERE ***"
-    
-    return 0 # Default to trivial solution
+        remainingCorners.remove(nextNearestCorner) 
+    return heuristicValue
+    #return 0 # Default to trivial solution
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -480,7 +495,18 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    heuristic_val=0
+    starting_position=problem.startingGameState
+    food_list=foodGrid.asList()
+    print "foods" + str(len(food_list))
+    print "Food Heuristics in Action now !"
+    for food in food_list:
+        cost_val=mazeDistance(position,food,starting_position)
+        if cost_val >= heuristic_val:
+            heuristic_val = cost_val
+            #import pdb
+            #pdb.set_trace()
+    return heuristic_val
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
